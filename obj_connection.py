@@ -52,7 +52,7 @@ class Connection:
         results = cursor.fetchall()
         return results
 
-    def list_database(self) -> list:
+    def listDatabase(self) -> list:
         """
         List out all databases in sql server.
         """
@@ -66,7 +66,7 @@ class Connection:
                 dbs.append(val)
         return dbs
 
-    def count_database(self) -> int:
+    def countDatabase(self) -> int:
         """
         Count the number of databases in sql server.
         """
@@ -76,7 +76,7 @@ class Connection:
         results = cursor.fetchall()
         return results[0][0]
 
-    def create_database(self, name: str):
+    def createDatabase(self, name: str):
         """
         Create a new database.
         """

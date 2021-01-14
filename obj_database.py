@@ -15,7 +15,7 @@ class Database:
         cursor = self.conn.cursor()
         cursor.execute(sql)
 
-    def list_table(self) -> list:
+    def listTable(self) -> list:
         """
         List out tables in database.
         """
@@ -29,7 +29,7 @@ class Database:
                 tbs.append(val)
         return tbs
 
-    def count_table(self):
+    def countTable(self):
         """
         Count number of tables in database.
         """
@@ -39,7 +39,7 @@ class Database:
         results = cursor.fetchall()
         return len(results)
 
-    def create_table(self, tableName, keyColumnName, keyColumnSpec):
+    def createTable(self, tableName, keyColumnName, keyColumnSpec):
         """
         Create a new table to the database.
         Table should contain a key column so that it can be read and written.
