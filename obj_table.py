@@ -142,10 +142,10 @@ class Table:
         Return the query list of dictionary.
 
         Here is the example from 2 rows query of data:
-        [
-            {"key":0, "Name":"Joe", "Age":36},
-            {"key":1, "Name":"Eric", "Age":40}
-        ]
+        {
+            0:{"key":0, "Name":"Joe", "Age":36},
+            1:{"key":1, "Name":"Eric", "Age":40}
+        }
         ---
         By default argument, this function will execute a sql quote like this:
             SELECT * FROM `database`.`table`;
@@ -162,17 +162,20 @@ class Table:
             sql += " " + condition
         cursor = self.conn.cursor(pymysql.cursors.DictCursor)
         cursor.execute(sql)
-        results = cursor.fetchall()
+        records = cursor.fetchall()
+        results = {}
+        for i in range(len(records)):
+            results[i] = records[i]
         return results
 
-    def update(self, data: "list+dict"):
+    def update(self, data: "dict"):
         """
         update the data to the table.
         user should pass data like this:
-        [
-            {"key":0, "Name":"Joe", "Age":36},
-            {"key":1, "Name":"Eric", "Age":40}
-        ]
+        {
+            0:{"key":0, "Name":"Joe", "Age":36},
+            1:{"key":1, "Name":"Eric", "Age":40}
+        }
         ---
         WARMING:
             1. The data MUST contains key Field.
@@ -190,7 +193,8 @@ class Table:
         part1 += ")"
         # part 2
         part2 = ""
-        for row in data:
+        for key in data:
+            row = data[key]
             part2 += "("
             for column in columns:
                 val = row[column]
