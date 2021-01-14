@@ -39,7 +39,7 @@ class Table:
                 return row["Field"]
         return False
 
-    def list_column(self) -> list:
+    def listColumn(self) -> list:
         """
         List out columns in table.
         """
@@ -52,7 +52,7 @@ class Table:
             cols.append(row["Field"])
         return cols
 
-    def map_column(self) -> dict:
+    def getColumnMap(self) -> dict:
         """
         Return the map of columns with specification. 
 
@@ -72,7 +72,7 @@ class Table:
             colmap[row["Field"]] = row["Type"]
         return colmap
 
-    def count_column(self) -> int:
+    def countColumn(self) -> int:
         """
         Count the number of columns in table.
         """
@@ -82,19 +82,19 @@ class Table:
         results = cursor.fetchall()
         return len(results)
 
-    def add_column(self, name: str, spec: str):
+    def addColumn(self, name: str, spec: str):
         """
         Add a new column to table. 
 
         Arguments like this:
-        name = "key", spec = "INT NOT NULL PRIMARY KEY"
+        name = "key", spec = "INT"
         """
         sql = "ALTER TABLE `{}`.`{}` ADD `{}` {};".format(
             self.database, self.table, name, spec)
         cursor = self.conn.cursor()
         cursor.execute(sql)
 
-    def drop_column(self, name: str):
+    def dropColumn(self, name: str):
         """
         Drop a column in table.
         """
@@ -103,19 +103,19 @@ class Table:
         cursor = self.conn.cursor()
         cursor.execute(sql)
 
-    def alter_column(self, name: str, spec: str):
+    def alterColumn(self, name: str, spec: str):
         """
         Change the specification of the existed column.
 
         Arguments like this:
-        name = "key", spec = "INT NOT NULL PRIMARY KEY"
+        name = "key", spec = "INT"
         """
         sql = "ALTER TABLE `{}`.`{}` MODIFY `{}` {};".format(
             self.database, self.table, name, spec)
         cursor = self.conn.cursor()
         cursor.execute(sql)
 
-    def count_row(self) -> int:
+    def countRow(self) -> int:
         """
         Count the number of rows in table.
         """
@@ -125,7 +125,7 @@ class Table:
         results = cursor.fetchall()
         return results[0][0]
 
-    def drop_row(self, keyVal: any):
+    def dropRow(self, keyVal: any):
         """
         Drop a row by passing a key value.
         """
