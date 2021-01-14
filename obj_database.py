@@ -39,24 +39,14 @@ class Database:
         results = cursor.fetchall()
         return len(results)
 
-    def create_table(self, name, spec):
+    def create_table(self, tableName, keyColumnName, keyColumnSpec):
         """
         Create a new table to the database.
-
-        The specification of columns is passing by spec.
-        Example:
-        spec = {
-            "key":"INT NOT NULL PRIMARY KEY",
-            "name":"CHAR(30)",
-            "age":"INT"
-        }
+        Table should contain a key column so that it can be read and written.
         """
-        sql = "CREATE TABLE `{}`.`{}` (".format(self.database, name)
-        for column in spec.keys():
-            sql += "`{}` {},".format(column, spec[column])
-        if sql[-1] == ',':
-            sql = sql[:-1]
-        sql += ")"
+        sql = "CREATE TABLE `{}`.`{}` ".format(self.database, tableName)
+        sql += "(`{}` {})".format(keyColumnName,
+                                  keyColumnSpec+" NOT NULL PRIMARY KEY")
         cursor = self.conn.cursor()
         cursor.execute(sql)
 
