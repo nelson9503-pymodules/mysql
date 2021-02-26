@@ -1,4 +1,4 @@
-# mysqloo - Object-oriented MySQL
+# mysql - Object-oriented MySQL
 
 ## Prerequisite
 
@@ -8,99 +8,137 @@ mysqloo is built on [PyMySQL](https://pypi.org/project/PyMySQL/).
 pip install PyMySQL
 ```
 
-## Quick Start
+## Connect to Database
 
-Here is an simple example to create a database and a table.
+Every users create a database object, the database object will connect to the sql server at initial state. The object will create a json file to store the login information. If connection was failed, the object will ask user for host name, port, user name and password.
 
 ```python
-import mysqloo
+import mysql
 
-# connect to the mysql server.
-conn = mysqloo.NewConnection(
-    user="username",
-    password="123456",
-    host="127.0.0.1", # this is local host
-    port=3305
-)
-
-dbName = "maindb"
-# check if database not in server, create new one.
-if not dbName in conn.listDatabase():
-    conn.createDatabase(dbName)
-# connect to database
-db = conn.Database(dbName)
-
-tbName = "employee"
-# check if table not in database, create new one.
-if not tbName in db.listTable():
-    db.createTable(
-        tbName,
-        "staffid", # key column
-        "INT" # key data type
-    )
-tb = conn.Dataabse(tbName)
-
-# create the column we need
-if not "name" in tb.listColumn():
-    tb.addColumn("name", "CHAR(30)")
-if not "age" in tb.listColumn():
-    tb.addColumn("age", "INT")
-
-# this is the data we need update to the table
-dataToUpdate = {
-    0: {"staffid": 0, "name": "Tom", "age": 28},
-    1: {"staffid": 1, "name": "Peter", "age": 45},
-    2: {"staffid": 2, "name": "Tony", "age": 32}
-}
-# update the data
-tb.update(dataToUpdate)
-
-# don't forget to commit the changes
-conn.commit()
-# and don't forget disconnect to the sql server
-conn.close()
+db = mysql.DB("db_name")
 ```
 
+## Drop Database
 
-## Methods Discovery
+Use drop method to drop the database itself from the mysql server. Once the database has been dropped out, error will be raise if user trying access the database via the database object.
 
-**func |** NewConnection ( user: str, password: str, host: str, port: int )
+```python
+db.drop()
+```
 
-**class |** Connection
+## Commit Changes
 
-* **var |** user: `str`
-* **var |** password: `str`
-* **var |** host: `str`
-* **var |** port: `int`
-* **func |** connect ( )
-* **func |** commit ( )
-* **func |** close ( )
-* **func |** exec ( quote: `str` ) **->** result: `dict`
-* **func |** list_database ( ) **->** result: `list`
-* **func |** count_database ( ) **->** result: `int`
-* **func |** create_database ( name: `str` )
-* **func |** Database ( name: `str` ) **->** Database: `Database Object`
+Any changes on the database and tables in it, the changes will not affect the server until users commit them.
 
-**class |** Database
+```python
+db.commit()
+```
 
-* **func |** drop ( )
-* **func |** list_table ( ) **->** result: `list`
-* **func |** count_table ( ) **->** result: `int`
-* **func |** create_table ( name: `str`, spec: `dict` )
-* **func |** Table ( name: `str` ) **->** Table: `Table Object`
+## List Databases
 
-**class |** Table
+Users should connect a database in server to check the list of databases in server. In design of MySQL server, a database called "mysql" must exists in the server.
 
-* **func |** drop ( )
-* **func |** clear ( )
-* **func |** keyCol ( )
-* **func |** list_column ( ) **->** result: `list`
-* **func |** map_column ( ) **->** result: `dict`
-* **func |** count_column ( ) **->** result: `int`
-* **func |** add_column ( name: `str`, spec: `str` )
-* **func |** drop_column ( name: `str` )
-* **func |** alter_column ( name: `str`, spec: `str` )
-* **func |** count_row ( ) **->** result: `int`
-* **func |** drop_row ( keyVal: *any* )
-* **func |** query ( column: `str`, condiction: `str` ) **->** result: `dict`
-* **func |** update ( data: `list`+`dict` )
+```python
+db = mysql.DB("mysql")
+dbs = db.list_db()
+```
+
+## List Tables
+
+Users can list out the tables in the database.
+
+```python
+tbs = db.list_tb()
+```
+
+## Create Table
+
+To create a table, users must define the table name, key column name and the data type of keys. The new table conatins only the key column at first initialization. User should add the value columns to complete the table setting.
+
+```python
+tb = db.add_table("staff_table", "staff_id", "INT")
+tb.add_col("name", "CHAR(100)")
+tb.add_col("gender", "CHAR(1)")
+```
+
+## Get a Table
+
+Users can get the table object via the database object.
+
+```python
+tb = db.TB("table_name")
+```
+
+## Drop Table
+
+The method of dropping table is same as dropping database, the object will drops itself.
+
+```python
+tb.drop()
+```
+
+## Rename Table
+
+To rename the table, users should provide the new name of table.
+
+```python
+tb.rename("new_table_name")
+```
+
+## List Column
+
+This method returns the list of column names in table.
+
+```python
+cols = tb.list_col()
+```
+
+## Add and Drop Column
+
+```python
+tb.add_col("name", "CHAR(100)")
+tb.drop_col("name")
+```
+
+## Drop Data
+
+The only way to drop data is dropping the entire row of data by using key value.
+
+```python
+# we try to drop a staff information with staff id 100
+tb.drop_data(100)
+```
+
+## Query Data
+
+Query method return the query in dictionary ({keys: {col: value, col: value}, keys: {col: value, col: value}, ...}). Users can customize the query sql quote via the arguments `column` and `condition`.
+
+```python
+# we query the male staff names
+result = tb.query(column="id, name", condition="WHERE gender = 'M'")
+
+# The sql quote would be like this:
+# SELECT id, name FROM staff_table WHERE gender = 'M';
+```
+
+## Update Data
+
+The udpate method insert the data for new keys and udpate the data for existed keys. The data types of data should be consistent with the sql table.
+
+```python
+
+data = {
+    100: {"name": "Nelson", "gender": "M"}, # 100, 200 are staff id
+    200: {"name": "Mary", "gender": "F"}
+}
+
+tb.update(data)
+```
+
+## Execute SQL Quotes
+
+Users can execute the sql quotes using this method.
+
+```python
+result = db.execute("sql_quote") # some quote not returning data will return None
+```
