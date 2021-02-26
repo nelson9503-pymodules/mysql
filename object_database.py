@@ -20,6 +20,9 @@ class DB:
         Close connection.
         """
         self.conn.close()
+    
+    def commit(self):
+        self.conn.commit()
 
     def drop(self):
         """
