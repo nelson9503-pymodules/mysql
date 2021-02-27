@@ -96,7 +96,7 @@ class TB:
             return False
         # part 1
         columns = list(data[list(data.keys())[0]].keys())
-        part1 = "(" + self.key_col_name + "`,"
+        part1 = "(`" + self.key_col_name + "`,"
         for column in columns:
             part1 += "`" + column + "`,"
         if part1[-1] == ',':
