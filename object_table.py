@@ -123,12 +123,7 @@ class TB:
         key = self.key_col_name
         if key == False:
             raise AttributeError("Cannot control a table without key column.")
-        part3 = ""
-        for column in columns:
-            if column == key:
-                part3 += "`" + column + "` = VALUES(`" + column + "`),"
-        if part3[-1] == ',':
-            part3 = part3[:-1]
+        part3 = "`" + self.key_col_name + "` = VALUES(`" + self.key_col_name + "`)"
         # group parts
         sql = "INSERT INTO `{}`.`{}` ".format(self.DB.db_name, self.tb_name)
         sql += part1 + " VALUES "
