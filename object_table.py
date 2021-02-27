@@ -107,6 +107,10 @@ class TB:
         for key in data:
             row = data[key]
             part2 += "("
+            keyval = key
+            if type(keyval) == str:
+                keyval = "'" + keyval + "'"
+            part2 += str(keyval) + ","
             for column in columns:
                 if not column in row:
                     raise AttributeError("Update method cannot process unbalance dictionary.")
