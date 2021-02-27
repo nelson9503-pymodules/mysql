@@ -95,8 +95,8 @@ class TB:
         if len(data) == 0:
             return False
         # part 1
-        columns = data[0].keys()
-        part1 = "("
+        columns = list(data[list(data.keys())[0]].keys())
+        part1 = "(" + self.key_col_name + "`,"
         for column in columns:
             part1 += "`" + column + "`,"
         if part1[-1] == ',':
@@ -108,6 +108,8 @@ class TB:
             row = data[key]
             part2 += "("
             for column in columns:
+                if not column in row:
+                    raise AttributeError("Update method cannot process unbalance dictionary.")
                 val = row[column]
                 if type(val) == str:
                     val = "'" + val + "'"
