@@ -117,6 +117,8 @@ class TB:
                 val = row[column]
                 if type(val) == str:
                     val = "'" + val + "'"
+                if val == None:
+                    val = "null"
                 part2 += str(val) + ","
             if part2[-1] == ',':
                 part2 = part2[:-1]
