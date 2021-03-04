@@ -140,5 +140,8 @@ tb.update(data)
 Users can execute the sql quotes using this method.
 
 ```python
-result = db.execute("sql_quote") # some quote not returning data will return None
+result = db.execute("sql_quote", return_dict=True)
+
+# return_dict = True -> return dictionary
+# return_dict = False -> return tuple
 ```
