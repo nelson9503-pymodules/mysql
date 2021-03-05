@@ -61,6 +61,8 @@ class TB:
         """
         Drop a row of data by using key.
         """
+        if type(key_value) == str:
+            key_value = "'{}'".format(key_value)
         sql = "DELETE FROM `{}`.`{}` WHERE `{}`={};".format(
             self.DB.db_name, self.tb_name, self.key_col_name, key_value)
         self.DB.execute(sql)
