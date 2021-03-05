@@ -153,6 +153,11 @@ class TB:
                 # in case value is None
                 if val == None:
                     val = "null"
+                if type(val) == bool:
+                    if val == True:
+                        val = 1
+                    else:
+                        val = 0
                 part2 += str(val) + ","
             # remove the last , and add ),
             if part2[-1] == ',':
