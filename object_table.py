@@ -170,12 +170,21 @@ class TB:
 
     # This part generate the part3 of update sql quote.
     def __generate_update_quote_part3(self, data: dict) -> str:
+        first_key_of_data = list(data.keys())[0]  # get the first key value
+        # get the column names from first row of data
+        columns = list(data[first_key_of_data].keys())
         key = self.key_col_name
         if key == False:
             raise AttributeError("Cannot control a table without key column.")
-        part3 = "`{key_col_name}` = VALUES(`{key_col_name}`)".format(
+        part3 = "`{key_col_name}` = VALUES(`{key_col_name}`),".format(
             key_col_name = self.key_col_name
         )
+        for column in columns:
+            part3 += "`{col_name}` = VALUES(`{col_name}`),".format(
+                col_name=column
+            )
+        if part3[-1] == ",":
+            part3 = part3[:-1]
         return part3
 
     # We ask sql server for the details of columns of table.
