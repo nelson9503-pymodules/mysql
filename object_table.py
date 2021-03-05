@@ -81,7 +81,12 @@ class TB:
         # We need a complete dictionary so that the users will not be surprised.
         results = {}
         for i in range(len(records)):
-            results[i] = records[i]
+            keyval = records[i][self.key_col_name]
+            results[keyval] = {}
+            for col in records[i]:
+                if col == self.key_col_name:
+                    continue
+                results[keyval][col] = records[i][col]
         return results
 
     def update(self, data: dict):
