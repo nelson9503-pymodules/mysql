@@ -129,13 +129,13 @@ class TB:
         columns = list(data[first_key_of_data].keys())
         part2 = ""
         for key in data:
+            row = data[key]
             part2 += "("
             # insert value of key column first
             if type(key) == str:
                 key = "'{}'".format(key)
             part2 += str(key) + ","
             # insert the rest of values of columns
-            row = data[key]
             for column in columns:
                 if not column in row:
                     raise KeyError("Rows contains different columns.")
