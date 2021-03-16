@@ -1,8 +1,6 @@
-import os
-import json
+
 import pymysql
-import tkinter as tk
-from tkinter import messagebox, simpledialog
+from .ServerConnector import ServerConnector
 from .object_table import TB
 
 # There are two main object in this mysql package: Database and Table.
@@ -16,12 +14,14 @@ class DB:
     # When initialize the database object,
     # Object will establish a connection to the sql server.
     # Then, it create a database to sql server if it was not exists.
-    def __init__(self, db_name: str):
+    def __init__(self, db_name: str, host="", port=0, user="", password=""):
         """
         Connect to a database.
         """
         self.db_name = db_name
-        self.__connect_to_server()
+        self.serverConnector = ServerConnector()
+        self.serverConnector.set_loginInfo(host, port, user, password)
+        self.__connect_to_MySQLServer()
         self.__check_db_exists()
 
     # close the connection to prevent "too many connection" error
@@ -115,6 +115,15 @@ class DB:
         cursor.execute(sql_quote)
         results = cursor.fetchall()
         return results
+    
+    def get_loginInfo(self) -> dict:
+        """
+        Get the login information from the database object.
+        """
+        return self.serverConnector.get_loginInfo()
+
+    def __connect_to_MySQLServer(self):
+        self.conn = self.serverConnector.connect_to_MySQLServer()
 
     # Check if the database is in the server
     # If not, create a new database.
@@ -122,51 +131,3 @@ class DB:
         if not self.db_name in self.list_db():
             sql = "CREATE DATABASE {};".format(self.db_name)
             self.execute(sql)
-
-    # Keep trying to connect the sql server until success.
-    def __connect_to_server(self):
-        while True:
-            try:
-                self.__get_sql_config()
-                self.conn = pymysql.connect(
-                    host=self.config["host"],
-                    port=self.config["port"],
-                    user=self.config["user"],
-                    password=self.config["password"]
-                )
-                break
-            except:
-                self.__ask_sql_config_by_gui()
-
-    # Ask user for the sql server configurations.
-    # The configurations will be stored in json.
-    def __ask_sql_config_by_gui(self):
-        root = tk.Tk()
-        messagebox.showerror(
-            title="MySQL Login",
-            message="Failed. Please reconfigure the login information."
-        )
-        host = simpledialog.askstring("MySQL Configuration", "Host Name:")
-        port = simpledialog.askinteger("MySQL Configuration", "Port:")
-        user = simpledialog.askstring("MySQL Configuration", "User Name:")
-        password = simpledialog.askstring(
-            "MySQL Configuration", "Password:", show="*")
-        root.destroy()
-        # save configurations into json
-        with open(self.config_path, 'w') as f:
-            j = {
-                "host": host,
-                "port": port,
-                "user": user,
-                "password": password
-            }
-            f.write(json.dumps(j, indent=4))
-
-    # Get the sql configurations.
-    # If the config file not exists, ask user for config details by gui.
-    def __get_sql_config(self):
-        self.config_path = "./mysql_config.json"
-        if not os.path.exists(self.config_path):
-            self.__ask_sql_config_by_gui()
-        with open(self.config_path, 'r') as f:
-            self.config = json.loads(f.read())
