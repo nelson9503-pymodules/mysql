@@ -1,7 +1,7 @@
 
 import pymysql
 from .ServerConnector import ServerConnector
-from .object_table import TB
+from .Table import TB
 
 # There are two main object in this mysql package: Database and Table.
 # Database object responsible for connection between sql server and management of tables.
