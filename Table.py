@@ -140,7 +140,7 @@ class TB:
             part2 += "("
             # insert value of key column first
             if type(key) == str:
-                key = "'{}'".format(key)
+                key = '"{}"'.format(key)
             part2 += str(key) + ","
             # insert the rest of values of columns
             for column in columns:
@@ -149,7 +149,7 @@ class TB:
                 val = row[column]
                 # in case value is string
                 if type(val) == str:
-                    val = "'{}'".format(val)
+                    val = '"{}"'.format(val)
                 # in case value is None
                 if val == None:
                     val = "null"
